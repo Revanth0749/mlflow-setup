@@ -1,1 +1,3 @@
 terraform/bootstrap/
+terraform/envs/staging/.terraform/
+terraform/envs/staging/.terraform.lock.hcl
