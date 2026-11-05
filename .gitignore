@@ -3,3 +3,5 @@ terraform/envs/staging/00-foundation/.terraform/
 terraform/envs/staging/00-foundation/.terraform.lock.hcl
 terraform/envs/staging/05-network/.terraform/
 terraform/envs/staging/05-network/.terraform.lock.hcl
+terraform/envs/staging/07-eks/.terraform/
+terraform/envs/staging/07-eks/.terraform.lock.hcl
