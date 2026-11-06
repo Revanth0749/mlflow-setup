@@ -1,5 +1,5 @@
 module "rds_sg" {
-  source = "../../../modules/security-group"
+  source = "git::ssh://git@github.com/Revanth0749/mlflow-setup.git//terraform/modules/security-group?ref=main"
 
   name        = "mlflow-${var.environment}-rds"
   description = "Allow PostgreSQL from the EKS nodes only"

@@ -1,5 +1,5 @@
 module "eks" {
-  source = "../../../modules/eks"
+  source = "git::ssh://git@github.com/Revanth0749/mlflow-setup.git//terraform/modules/eks?ref=main"
 
   cluster_name    = "mlflow-${var.environment}"
   cluster_version = "1.31"

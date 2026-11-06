@@ -1,5 +1,5 @@
 module "kms" {
-  source = "../../../modules/kms"
+  source = "git::ssh://git@github.com/Revanth0749/mlflow-setup.git//terraform/modules/kms?ref=main"
 
   alias              = "alias/mlflow-${var.environment}"
   description        = "MLflow ${var.environment}: encrypts artifacts, database, and images"

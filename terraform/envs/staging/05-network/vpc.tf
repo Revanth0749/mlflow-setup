@@ -3,7 +3,7 @@ data "aws_availability_zones" "available" {
 }
 
 module "vpc" {
-  source = "../../../modules/vpc/"
+  source = "git::ssh://git@github.com/Revanth0749/mlflow-setup.git//terraform/modules/vpc?ref=main"
 
   name = "mlflow-${var.environment}"
   cidr = "10.0.0.0/16"

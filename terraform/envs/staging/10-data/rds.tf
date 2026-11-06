@@ -1,5 +1,5 @@
 module "rds" {
-  source = "../../../modules/rds-postgres"
+  source = "git::ssh://git@github.com/Revanth0749/mlflow-setup.git//terraform/modules/rds-postgress?ref=main"
 
   identifier = "mlflow-${var.environment}"
 
