@@ -7,3 +7,5 @@ terraform/envs/staging/07-eks/.terraform/
 terraform/envs/staging/07-eks/.terraform.lock.hcl
 terraform/envs/staging/10-data/.terraform/
 terraform/envs/staging/10-data/.terraform.lock.hcl
+erraform/envs/staging/20-identity/.terraform/
+terraform/envs/staging/20-identity/.terraform.lock.hcl
