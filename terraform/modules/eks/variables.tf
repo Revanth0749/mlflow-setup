@@ -54,7 +54,7 @@ variable "node_desired_size" {
 variable "admin_principal_arns" {
   type        = list(string)
   description = "Extra IAM role/user ARNs given cluster-admin"
-  default = []
+  default     = []
 }
 
 variable "addons" {
