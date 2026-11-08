@@ -5,7 +5,7 @@ variable "name" {
 
 variable "cidr" {
   type        = string
-  description = "CIDR block for the VPC"
+  description = "CIDR range for the VPC"
 }
 
 variable "azs" {

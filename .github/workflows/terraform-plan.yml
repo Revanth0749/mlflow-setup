@@ -30,7 +30,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-terraform@v3
+      - uses: hashicorp/setup-terraform@v3
         with:
           terraform-version: 1.10.0
           terraform-wrapper: false
