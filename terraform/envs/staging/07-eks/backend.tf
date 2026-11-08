@@ -1,7 +1,7 @@
 terraform {
   backend "s3" {
     bucket       = "mlflow-tfstate-181276422093"
-    key          = "mlflow/staging/05-network/terraform.tfstate"
+    key          = "mlflow/staging/07-eks/terraform.tfstate"
     region       = "ap-southeast-2"
     use_lockfile = true
 
