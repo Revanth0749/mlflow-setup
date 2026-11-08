@@ -1,0 +1,73 @@
+name: terraform-destory
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type "destroy-staging" to confirm'
+        required: true
+        type: string
+      layers:
+        description: 'Which layers to destroy'
+        required: true
+        type: choice
+        default: 'all'
+        options:
+          - all-except-foundation
+          - all
+          - 20-identity
+          - 10-data
+          - 07-eks
+          - 05-network
+          - 00-foundation
+          
+permissions:
+  contents: read
+
+concurrency:
+  group: terraform-apply
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: ap-southeast-2
+  AWS_DEFAULT_REGION: ap-southeast-2
+  TF_IN_AUTOMATION: "true"
+
+jobs:
+  destroy:
+    runs-on: ubuntu-latest
+    environment: staging        # required reviewers approve before this runs
+    if: ${{ inputs.confirm == 'destroy-staging' && github.ref == 'refs/heads/main' }}
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.10.0   # match your local/CI version
+          terraform_wrapper: false
+
+      - name: Decide layers (reverse dependency order)
+        id: layers
+        run: |
+          case "${{ inputs.layers }}" in
+            all)                    L="20-identity 10-data 07-eks 05-network 00-foundation" ;;
+            all-except-foundation)  L="20-identity 10-data 07-eks 05-network" ;;
+            *)                      L="${{ inputs.layers }}" ;;
+          esac
+          echo "list=$L" >> "$GITHUB_OUTPUT"
+          echo "Will destroy: $L"
+
+      - name: Destroy
+        run: |
+          set -euo pipefail
+          for layer in ${{ steps.layers.outputs.list }}; do
+            echo "::group::destroy $layer"
+            cd "terraform/envs/staging/$layer"
+            terraform init -input=false
+            terraform destroy -input=false -auto-approve -lock-timeout=60s
+            cd "$GITHUB_WORKSPACE"
+            echo "::endgroup::"
+          done        
