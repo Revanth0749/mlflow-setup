@@ -5,7 +5,7 @@ variable "region" {
 
 variable "role_arn" {
   type        = string
-  description = "AWS role assigned for terraform user"
+  description = "AWS role assigned for terraform user to provision resources"
 }
 
 variable "environment" {
