@@ -34,6 +34,10 @@ jobs:
         with:
           terraform-version: 1.10.0
           terraform-wrapper: false
+        
+      - uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.MODULES_DEPLOY_KEY }}
 
       - name: Format Check
         run: terraform fmt -check -recursive
