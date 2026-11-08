@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        layer: [oo-foundation, 05-network, 07-eks, 10-data, 20-identity]
+        layer: [00-foundation, 05-network, 07-eks, 10-data, 20-identity]
     defaults:
       run:
         working-directory: terraform/envs/staging/${{ matrix.layer }}
