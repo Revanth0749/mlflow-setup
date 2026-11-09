@@ -6,10 +6,11 @@ on:
         paths: ["terraform/**"]
 
 permissions:
+    id-token: write
     contents: read
 
 concurrency:
-    group: terraform-appy
+    group: terraform-apply
     cancel-in-progress: false
 
 env:
@@ -21,11 +22,17 @@ jobs:
     apply:
         runs-on: ubuntu-latest
         environment: staging
-        env:
-            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS__KEY_ID }}
-            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
         steps:
-            -  uses: actions/checkout@v4
+            - uses: actions/checkout@v4
+
+            - name: Configure AWS credentials (OIDC)
+              uses: aws-actions/configure-aws-credentials@v4
+              with:
+                role-to-assume: arn:aws:iam::<ACCOUNT_ID>:role/github-actions-terraform-apply-staging
+                role-session-name: tf-apply-${{ github.run_id }}
+                aws-region: ${{ env.AWS_REGION }}
+                role-duration-seconds: 3600
 
             - uses: hashicorp/setup-terraform@v3
               with:

@@ -2,9 +2,10 @@ name: terraform-plan
 
 on:
   pull_request:
-    paths: ["terraform/**"] 
+    paths: ["terraform/**"]
 
 permissions:
+  id-token: write
   contents: read
   pull-requests: write
 
@@ -24,11 +25,16 @@ jobs:
     defaults:
       run:
         working-directory: terraform/envs/staging/${{ matrix.layer }}
-    env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS__KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
     steps:
       - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::840432317544:role/github-actions-deploy-role
+          role-session-name: tf-plan-${{ matrix.layer }}-${{ github.run_id }}
+          aws-region: ${{ env.AWS_REGION }}
 
       - uses: hashicorp/setup-terraform@v3
         with:
@@ -65,7 +71,7 @@ jobs:
               issue_number: context.issue.number,
               body: `### Plan: ${{ matrix.layer }}\n\`\`\`\n${plan.slice(0, 60000)}\n\`\`\``
             });
-            
+
       - name: Add plan to job summary
         if: always()
         run: |

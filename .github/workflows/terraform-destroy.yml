@@ -1,4 +1,4 @@
-name: terraform-destory
+name: terraform-destroy   # fixed typo (was terraform-destory)
 
 on:
   workflow_dispatch:
@@ -20,8 +20,9 @@ on:
           - 07-eks
           - 05-network
           - 00-foundation
-          
+
 permissions:
+  id-token: write
   contents: read
 
 concurrency:
@@ -36,42 +37,48 @@ env:
 jobs:
   destroy:
     runs-on: ubuntu-latest
-    environment: staging        # required reviewers approve before this runs
+    environment: staging        
     if: ${{ inputs.confirm == 'destroy-staging' && github.ref == 'refs/heads/main' }}
-    env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS__KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
     steps:
       - uses: actions/checkout@v4
 
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::<ACCOUNT_ID>:role/github-actions-terraform-destroy-staging
+          role-session-name: tf-destroy-${{ github.run_id }}
+          aws-region: ${{ env.AWS_REGION }}
+          role-duration-seconds: 3600
+
       - uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.10.0   # match your local/CI version
+          terraform_version: 1.10.0
           terraform_wrapper: false
 
       - name: Decide layers (reverse dependency order)
         id: layers
+        env:
+          LAYERS_INPUT: ${{ inputs.layers }}
         run: |
-          case "${{ inputs.layers }}" in
+          case "$LAYERS_INPUT" in
             all)                    L="20-identity 10-data 07-eks 05-network 00-foundation" ;;
             all-except-foundation)  L="20-identity 10-data 07-eks 05-network" ;;
-            *)                      L="${{ inputs.layers }}" ;;
+            *)                      L="$LAYERS_INPUT" ;;
           esac
           echo "list=$L" >> "$GITHUB_OUTPUT"
           echo "Will destroy: $L"
-          
+
       - uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.MODULES_DEPLOY_KEY }}
-          
+
       - name: Destroy
+        env:
+          LAYER_LIST: ${{ steps.layers.outputs.list }}
         run: |
           set -euo pipefail
-          for layer in ${{ steps.layers.outputs.list }}; do
+          for layer in $LAYER_LIST; do
             echo "::group::destroy $layer"
             cd "terraform/envs/staging/$layer"
-            terraform init -input=false
-            terraform destroy -input=false -auto-approve -lock-timeout=60s
-            cd "$GITHUB_WORKSPACE"
-            echo "::endgroup::"
-          done        
+            terraform init
