@@ -29,7 +29,7 @@ jobs:
             - name: Configure AWS credentials (OIDC)
               uses: aws-actions/configure-aws-credentials@v4
               with:
-                role-to-assume: arn:aws:iam::<ACCOUNT_ID>:role/github-actions-terraform-apply-staging
+                role-to-assume: arn:aws:iam::840432317544:role/github-actions-deploy-role
                 role-session-name: tf-apply-${{ github.run_id }}
                 aws-region: ${{ env.AWS_REGION }}
                 role-duration-seconds: 3600
