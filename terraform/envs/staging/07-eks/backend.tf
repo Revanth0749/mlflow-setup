@@ -6,7 +6,7 @@ terraform {
     use_lockfile = true
 
     assume_role = {
-      role_arn = "arn:aws:iam::181276422093:role/tf-deploy-role"
+      role_arn = "arn:aws:iam::840432317544:role/github-actions-deploy-role"
     }
   }
 }
