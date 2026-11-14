@@ -18,7 +18,7 @@ resource "aws_db_parameter_group" "this" {
 resource "aws_db_instance" "this" {
   identifier = var.identifier
 
-  engine         = "postgress"
+  engine         = "postgres"
   engine_version = var.engine_version
   instance_class = var.instance_class
 
