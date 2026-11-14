@@ -1,9 +1,7 @@
 name: terraform-apply
 
 on:
-    push:
-        branches: [main]
-        paths: ["terraform/**"]
+  workflow_dispatch:
 
 permissions:
     id-token: write
