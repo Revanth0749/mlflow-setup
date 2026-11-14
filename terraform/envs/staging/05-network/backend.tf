@@ -4,9 +4,5 @@ terraform {
     key          = "mlflow/staging/05-network/terraform.tfstate"
     region       = "ap-southeast-2"
     use_lockfile = true
-
-    assume_role = {
-      role_arn = "arn:aws:iam::840432317544:role/github-actions-deploy-role"
-    }
   }
 }

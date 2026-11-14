@@ -1,25 +1,22 @@
 locals {
-  state_bucket = "mlflow-tfstate-181276422093"
-  role_arn     = "arn:aws:iam::181276422093:role/tf-deploy-role"
+  state_bucket = "mlflow-tfstate-840432317544"
 }
 
 data "terraform_remote_state" "foundation" {
   backend = "s3"
   config = {
-    bucket      = local.state_bucket
-    key         = "mlflow/staging/00-foundation/terraform.tfstate"
-    region      = "ap-southeast-2"
-    assume_role = { role_arn = local.role_arn }
+    bucket = local.state_bucket
+    key    = "mlflow/staging/00-foundation/terraform.tfstate"
+    region = "ap-southeast-2"
   }
 }
 
 data "terraform_remote_state" "eks" {
   backend = "s3"
   config = {
-    bucket      = local.state_bucket
-    key         = "mlflow/staging/07-eks/terraform.tfstate"
-    region      = "ap-southeast-2"
-    assume_role = { role_arn = local.role_arn }
+    bucket = local.state_bucket
+    key    = "mlflow/staging/07-eks/terraform.tfstate"
+    region = "ap-southeast-2"
   }
 }
 
